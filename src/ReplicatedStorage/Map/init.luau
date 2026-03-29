@@ -49,7 +49,7 @@ local Holder = ScreenGui:WaitForChild("UI", 30):WaitForChild("Holder", 30)
 
 local Bezier = require(script.Bezier)
 local Line = require(script.Line)
-local BezierTween = require(script.BezierTween)
+local BezierTween = require(`./BezierTween`)
 
 local Map = {
 	Points = {},
@@ -84,18 +84,18 @@ function Map.Init()
 	end
 	]]
 	local list = {}
-	for i = 1, 6 do
+	for i = 1, #Holder.Points:GetChildren() do
 		--local pt = Holder.Points[i]
 		list[i] = Holder.Points[i].Position
 		--list[i] = pt.AbsolutePosition + pt.AbsoluteSize/2 + offset
 	end
 
-	
-	--local t = BezierTween.Create(Holder.ImageLabel, {20, 'Quad', 'Out'}, {
-	--	Position = list })
 
-	
-	--t:Play()
+	local t = BezierTween.Create(Holder.PathEx, {20, 'Quad', 'Out'}, {
+		Position = list })
+
+
+	t:Play()
 end
 
 function Map.Start()

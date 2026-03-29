@@ -40,6 +40,7 @@ class Dino {
 local Player = game.Players.LocalPlayer
 local ScreenGui = Player:WaitForChild("PlayerGui", 30)
 local Holder = ScreenGui:WaitForChild("UI", 30):WaitForChild("Holder", 30)
+local BezierTween = require(`./BezierTween`)
 
 
 local DinoTypes = {
@@ -54,10 +55,20 @@ local DinoTypes = {
 
 local DinoFactory = {
 	Dinos = {},
-	Types = DinoTypes	
+	Types = DinoTypes,
+	DinosEscaped = 0
 }
 
 local counter = 0
+
+local list = {}
+for i = 1, #Holder.Points:GetChildren() do
+	if Holder.Points:FindFirstChild(i) == nil then continue end
+	--local pt = Holder.Points[i]
+	list[i] = Holder.Points[i].Position
+	--list[i] = pt.AbsolutePosition + pt.AbsoluteSize/2 + offset
+end
+
 
 function DinoFactory.new(dType)
 	local self = setmetatable({}, {__index = DinoFactory})
@@ -78,18 +89,41 @@ function DinoFactory.new(dType)
 		
 	end
 	
-	for i,v in dType do 
+	for i,v in data do 
 		self[i] = v
 	end
-	local inst = Instance.new("ImageLabel")
-	inst.Parent = Holder.Dino
-	inst.Name = self.id
-	inst.Position = UDim2.fromScale(0.5,0.5)	
 
+	--Create Image Label
+	local inst = Instance.new("ImageLabel")
+	inst.Name = self.id
+	inst.Size = UDim2.fromScale(0.1,0.15)	
+	inst.Position = Holder.Points[1].Position
+	inst.BackgroundTransparency = 1	
+	inst.Image = self.sprites[1]
 	self.Instance = inst
+
+	inst.Parent = Holder.Caveman
+
 	
-	table.insert(DinoFactory.Dinos, self)
+
+	local t = BezierTween.Create(inst, {math.random(30,50), 'Quad', 'Out'}, {
+		Position = list })
+
+
+	t:Play()
 	
+	t.Completed:Connect(function()		
+		
+		self.Instance:Destroy()
+		table.remove(DinoFactory.Dinos, self.id)	
+	end)
+
+	self.Tween = t
+
+	DinoFactory.Dinos[self.id] = self
+	--table.insert(DinoFactory.Dinos, self)
+
+
 	return self	
 end
 

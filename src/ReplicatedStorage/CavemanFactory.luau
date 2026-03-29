@@ -34,7 +34,7 @@ local ScreenGui = Player:WaitForChild("PlayerGui", 30)
 local Holder = ScreenGui:WaitForChild("UI", 30):WaitForChild("Holder", 30)
 
 local CavemanTypes = {
-	Puncher = { speed = 1, range = 2, strength = 2 , sprites = {
+	Puncher = { speed = 1, range = 350, strength = 2 , sprites = {
 		idle = "rbxassetid://74014618647914",
 		attacking = {"rbxassetid://106875033114893", "rbxassetid://105113058766576"}
 	}},
@@ -77,7 +77,6 @@ function CavemanFactory.new(cType)
 			local i,v  = next(CavemanTypes)
 			if (i == num) then data = v end
 		end
-		--print("Selected: ", i)
 
 	end
 	
@@ -85,19 +84,32 @@ function CavemanFactory.new(cType)
 	for i,v in data do 
 		self[i] = v
 	end
-	
-	function self:Attack()
-		if tick() - self.AttackDebounce < self.strength then return end
-		self.Attacking = true
-		game.ReplicatedStorage.Sounds.Bonk:Play()
-		self.AttackDebounce = tick() + self.strength
-	end
-	
-	
+		
 	self.Attacking = false
 	self.AttackDebounce = tick()
 	self.SpriteIndex = -1
 	self.Spawned = false
+	
+	function self.Attack(dino)
+		if self.Attacking then return end
+		self.Attacking = true
+		
+		dino.health -= self.strength
+		
+		local bonk = game.ReplicatedStorage.Sounds.Bonk:Clone()
+		
+		bonk.PlaybackSpeed = math.random(100, 250)/100
+		bonk.Parent = game.ReplicatedStorage
+
+		bonk:Play()
+		game.Debris:AddItem(bonk, bonk.TimeLength)
+		
+		self.AttackDebounce = tick() + self.strength
+		
+		task.delay(1, function() self.Attacking = false end)
+	end
+	
+
 	
 	--Create Image Label
 	local inst = Instance.new("ImageLabel")
@@ -125,13 +137,15 @@ function CavemanFactory.Start()
 	task.spawn(function()
 		while true do
 			for _, obj in CavemanFactory.activeCaveman do
+				--print(obj)
 				if not obj.Spawned or obj == nil then continue end
-				local attacking: {} = obj.Sprites.Attacking 
+				local attacking: {} = obj.sprites.attacking 
 				if obj.Attacking then 
 					obj.SpriteIndex = (obj.SpriteIndex + 1) % #attacking + 1 -- +1 bc starting at 1
+					--print(obj.SpriteIndex)
 					obj.Instance.Image = attacking[obj.SpriteIndex]
 				else 
-					obj.Instance.Image = obj.Sprites.Idle
+					obj.Instance.Image = obj.sprites.idle
 				end
 			end
 			
