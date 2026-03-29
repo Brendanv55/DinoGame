@@ -1,0 +1,38 @@
+{
+  "name": "Untitled Money Game Thing",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "Modules": {
+        "$path": "src/ReplicatedStorage/Modules"
+      },
+      "Util": {
+        "$path": "src/ReplicatedStorage/Util"
+      },
+      "Packages": {
+        "$path": "Packages"
+      }
+    },
+
+    "ServerScriptService": {
+      "Server": {
+        "$path": "src/server"
+      }
+    },
+
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+          "$path": "src/Player/StarterPlayerScripts"
+      }, 
+      "StarterCharacterScripts": {
+          "$path": "src/Player/StarterCharacterScripts"
+      }
+    },
+    "ServerStorage": {
+      "Modules": {
+          "$path": "src/ServerStorage"
+        }
+    }
+  }
+}

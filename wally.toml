@@ -1,0 +1,10 @@
+[package]
+name = "user/box-game"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+Framework = "eveonau/framework@0.1.2"
+Future = "red-blox/future@^1.0.1"
+Signal = "red-blox/signal@^2.0.2"
